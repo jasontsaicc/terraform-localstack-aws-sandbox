@@ -1,0 +1,22 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - "4566:4566"            # LocalStack 主端口
+      - "4510-4559:4510-4559"  # 部分服务需要额外端口
+    environment:
+      - SERVICES=ec2,eks,rds, s3,redshift, dynamodb, lambda    # 启用需要的服务
+      - DEFAULT_REGION=ap-northeast-1
+      - AWS_DEFAULT_REGION=ap-northeast-1
+      - EDGE_PORT=4566
+      - DEBUG=1
+      - LS_LOG=info
+      - LOCALSTACK_HOST=localhost
+      - HOST_TMP_FOLDER=${TEMPDIR:-/tmp/localstack}  # 持久化数据目录
+    volumes:
+      - "${TEMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
